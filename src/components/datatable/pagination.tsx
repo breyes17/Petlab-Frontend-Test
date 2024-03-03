@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Button } from "../ui/button";
 import {
   Select,
@@ -8,34 +7,51 @@ import {
   SelectGroup,
   SelectItem,
 } from "../ui/select";
-import { Table } from "@tanstack/react-table";
 import { useProductStore } from "../../context/useProduct";
+import { useSearchParams } from "react-router-dom";
+import { CONSTANT } from "../../constant";
 
-interface PaginationInterface<TData> {
-  table: Table<TData>;
-}
-
-const Pagination: React.FC<PaginationInterface<any>> = ({ table }) => {
-  const [index, setIndex] = useState(0);
+const Pagination = () => {
+  let [searchParams, setSearchParams] = useSearchParams();
   const setLimit = useProductStore((state) => state.setLimit);
-  // const filter = useProductStore((state) => state.filterProducts);
+  const setPage = useProductStore((state) => state.setPaginationNumber);
+  const page = useProductStore((state) => state.paginationPage);
   const count = useProductStore((state) => state.totalCount);
   const limit = useProductStore((state) => state.limit);
   const numberOfPages = Math.ceil(count / limit);
   const itemsPerPage = [3, 9, 12]; // default
 
+  const tagValue = searchParams.get(CONSTANT.TAGS_LIKE) ?? "";
+  const priceValue = searchParams.get(CONSTANT.LTE) ?? "";
+  const subscriptionValue = searchParams.get(CONSTANT.SUBSCRIPTION) ?? "";
+  const isDisableLimit =
+    [tagValue, priceValue, subscriptionValue].filter((param) => param).length >
+    0;
+
+  const onNavigatePage = (value: number) => {
+    setPage(value);
+    setSearchParams((prev) => {
+      prev.set(CONSTANT.PAGE, value.toString());
+      return prev;
+    });
+  };
+
   return (
     <div className="flex items-center justify-between py-4">
       <div className="flex space-x-2 items-center">
-        <h3 className="text-sm">
-          current count {count} <br />
-          number of pages : {numberOfPages} <br />
-          Items per page: {limit} <br />
-          current index: {index}
-        </h3>
+        <h3 className="text-sm">Items per page:</h3>
         <Select
           value={limit.toString()}
-          onValueChange={(value) => setLimit(parseInt(value))}
+          disabled={isDisableLimit}
+          onValueChange={(value) => {
+            setLimit(parseInt(value));
+            setPage(1);
+            setSearchParams((prev) => {
+              prev.set(CONSTANT.PAGE, "1");
+              prev.set(CONSTANT.LIMIT, value);
+              return prev;
+            });
+          }}
         >
           <SelectTrigger className="w-20">
             <SelectValue placeholder="12" />
@@ -55,8 +71,10 @@ const Pagination: React.FC<PaginationInterface<any>> = ({ table }) => {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setIndex((i) => (i -= 1))}
-          disabled={index <= 0}
+          onClick={() => {
+            onNavigatePage(page - 1);
+          }}
+          disabled={page <= 1}
         >
           Previous
         </Button>
@@ -64,12 +82,9 @@ const Pagination: React.FC<PaginationInterface<any>> = ({ table }) => {
           variant="outline"
           size="sm"
           onClick={() => {
-            setIndex((i) => (i += 1));
-            // filter({
-
-            // })
+            onNavigatePage(page + 1);
           }}
-          disabled={numberOfPages === index + 1}
+          disabled={numberOfPages === page}
         >
           Next
         </Button>

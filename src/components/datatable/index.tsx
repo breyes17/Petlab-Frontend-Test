@@ -48,7 +48,10 @@ function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      className="bg-slate-900 text-slate-50"
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -91,7 +94,7 @@ function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <Pagination table={table} />
+      <Pagination />
     </div>
   );
 }

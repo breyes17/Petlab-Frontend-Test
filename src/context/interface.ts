@@ -18,7 +18,11 @@ export interface ProductStoreInterface {
   products: ProductInterface[];
   limit: number;
   totalCount: number;
-  getProducts: (page?: number, limit?: number) => Promise<void>;
-  filterProducts: (filter: { [key: string]: string } | null) => Promise<void>;
+  paginationIndex: number;
+  paginationPage: number;
+  // getProducts: (page?: number, limit?: number) => Promise<void>;
+  filterProducts: (filter: { [key: string]: string }) => Promise<void>;
   setLimit: (limit: number) => Promise<void>;
+  setPaginationIndex: (limit: number) => void;
+  setPaginationNumber: (limit: number) => void;
 }

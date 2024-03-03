@@ -1,4 +1,3 @@
-// import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -19,9 +18,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-// import { useProductStore } from "../context/useProduct";
 import { useSearchParams } from "react-router-dom";
 import { CONSTANT } from "../constant";
+import { useProductStore } from "../context/useProduct";
 
 const formSchema = z.object({
   tags_like: z.string(),
@@ -29,20 +28,11 @@ const formSchema = z.object({
   subscription: z.string(),
 });
 
-// const areAllValuesEmpty = (obj: { [key: string]: any }): boolean => {
-//   for (const key in obj) {
-//     if (obj.hasOwnProperty(key)) {
-//       if (obj[key] !== null && obj[key] !== undefined && obj[key] !== "") {
-//         return false;
-//       }
-//     }
-//   }
-//   return true;
-// };
-
 const SideBarForm = () => {
-  // const tags = useProductStore((state) => state.tags);
   let [searchParams, setSearchParams] = useSearchParams();
+  const filter = useProductStore((state) => state.filterProducts);
+  const setLimit = useProductStore((state) => state.setLimit);
+  const setPage = useProductStore((state) => state.setPaginationNumber);
   const tags = ["Chews", "Dog", "Formula", "Cat", "Shampoo"];
   const sortedTags = tags.sort((a, b) =>
     a.toLowerCase().localeCompare(b.toLowerCase())
@@ -52,23 +42,6 @@ const SideBarForm = () => {
   const priceValue = searchParams.get(CONSTANT.LTE) ?? "";
   const subscriptionValue = searchParams.get(CONSTANT.SUBSCRIPTION) ?? "";
 
-  // useEffect(() => {
-  //   const obj = {
-  //     tags_like: tagValue,
-  //     price_lte: priceValue,
-  //     subscription: subscriptionValue,
-  //   };
-  //   console.log({ obj });
-  //   if (areAllValuesEmpty(obj)) {
-  //     console.log("here");
-  //     filter({});
-  //   } else {
-  //     console.log("falseeee");
-  //     filter(obj);
-  //   }
-  // }, [tagValue, priceValue, subscriptionValue, areAllValuesEmpty]);
-
-  // const filter = useProductStore((state) => state.filterProducts);
   const defaultValues = {
     tags_like: tagValue,
     price_lte: "",
@@ -79,17 +52,20 @@ const SideBarForm = () => {
     defaultValues,
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // filter(values);
-  }
+  const onSubmit = (values: z.infer<typeof formSchema>) => {};
 
   const onReset = () => {
     form.reset(defaultValues);
     setSearchParams((prev) => {
-      prev.delete(CONSTANT.TAGS_LIKE);
-      prev.delete(CONSTANT.LTE);
-      prev.delete(CONSTANT.SUBSCRIPTION);
+      const deletion = Object.values(CONSTANT);
+      deletion.forEach((del) => prev.delete(del));
       return prev;
+    });
+    setLimit(12);
+    setPage(1);
+    filter({
+      [CONSTANT.PAGE]: "1",
+      [CONSTANT.LIMIT]: "12",
     });
   };
 
@@ -113,10 +89,9 @@ const SideBarForm = () => {
           <FormField
             control={form.control}
             name="tags_like"
-            render={({ field }) => (
+            render={() => (
               <FormItem>
                 <FormLabel className="flex">Tags:</FormLabel>
-                {/* <Select onValueChange={field.onChange} value={field.value}> */}
                 <Select
                   onValueChange={(value) => {
                     setSearchParams((prev) => {
@@ -181,7 +156,7 @@ const SideBarForm = () => {
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="" />
+                      <SelectValue placeholder="Select Subscription" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
