@@ -22,6 +22,7 @@ Filtering
 - I used the `useSearchParams()` from `react-router-dom` to set and get the query params from the url. When fetching the data I only used the native fetch api.
 - Everytime you changed the tag, price or subscription. It will automatically call the backend and update the table
 - I also added a reset button to clear the input fields and reset the table.
+- I added a title search to utilize the remainig backend endpoint
 
 Test Cases
 --------
