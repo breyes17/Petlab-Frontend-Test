@@ -22,11 +22,15 @@ export const useProductStore = create<ProductStoreInterface>((set) => ({
     if (
       filter[CONSTANT.TAGS_LIKE] !== "" ||
       filter[CONSTANT.LTE] !== "" ||
-      filter[CONSTANT.SUBSCRIPTION] !== ""
+      filter[CONSTANT.SUBSCRIPTION] !== "" ||
+      filter[CONSTANT.TITLE_LIKE] !== ""
     ) {
+      console.log("alsdkfjaslkdfjalskdj");
       set((state) => ({
         ...state,
         products: result,
+        limit: 12,
+        paginationPage: 1,
         totalCount: result.length,
       }));
     } else {

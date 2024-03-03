@@ -24,9 +24,11 @@ const Pagination = () => {
   const tagValue = searchParams.get(CONSTANT.TAGS_LIKE) ?? "";
   const priceValue = searchParams.get(CONSTANT.LTE) ?? "";
   const subscriptionValue = searchParams.get(CONSTANT.SUBSCRIPTION) ?? "";
+  const titleValue = searchParams.get(CONSTANT.TITLE_LIKE) ?? "";
   const isDisableLimit =
-    [tagValue, priceValue, subscriptionValue].filter((param) => param).length >
-    0;
+    [tagValue, priceValue, subscriptionValue, titleValue].filter(
+      (param) => param
+    ).length > 0;
 
   const onNavigatePage = (value: number) => {
     setPage(value);

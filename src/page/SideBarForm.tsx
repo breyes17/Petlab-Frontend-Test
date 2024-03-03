@@ -23,6 +23,7 @@ import { CONSTANT } from "../constant";
 import { useProductStore } from "../context/useProduct";
 
 const formSchema = z.object({
+  title_like: z.string(),
   tags_like: z.string(),
   price_lte: z.string(),
   subscription: z.string(),
@@ -41,11 +42,13 @@ const SideBarForm = () => {
   const tagValue = searchParams.get(CONSTANT.TAGS_LIKE) ?? "";
   const priceValue = searchParams.get(CONSTANT.LTE) ?? "";
   const subscriptionValue = searchParams.get(CONSTANT.SUBSCRIPTION) ?? "";
+  const titleValue = searchParams.get(CONSTANT.TITLE_LIKE) ?? "";
 
   const defaultValues = {
     tags_like: tagValue,
     price_lte: "",
     subscription: "",
+    title_like: "",
   };
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -81,10 +84,46 @@ const SideBarForm = () => {
     ));
   };
 
+  const inputOnChange = (name: string, value: string) => {
+    if (value) {
+      setSearchParams((prev) => {
+        prev.set(name, value);
+        return prev;
+      });
+    } else {
+      setSearchParams((prev) => {
+        prev.delete(name);
+        return prev;
+      });
+    }
+  };
+
   return (
     <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          {/* TITLE */}
+          <FormField
+            control={form.control}
+            name="title_like"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex">Title</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Search title"
+                    {...field}
+                    value={titleValue}
+                    onChange={(e) =>
+                      inputOnChange("title_like", e.target.value)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           {/* TAG */}
           <FormField
             control={form.control}
@@ -125,12 +164,7 @@ const SideBarForm = () => {
                     {...field}
                     type="number"
                     value={priceValue}
-                    onChange={(e) =>
-                      setSearchParams((prev) => {
-                        prev.set("price_lte", e.target.value);
-                        return prev;
-                      })
-                    }
+                    onChange={(e) => inputOnChange("price_lte", e.target.value)}
                   />
                 </FormControl>
                 <FormMessage />

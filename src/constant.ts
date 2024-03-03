@@ -4,4 +4,5 @@ export const CONSTANT = {
   SUBSCRIPTION: "subscription",
   PAGE: "_page",
   LIMIT: "_limit",
+  TITLE_LIKE: "title_like",
 };
