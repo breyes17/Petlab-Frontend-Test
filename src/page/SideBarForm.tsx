@@ -85,17 +85,14 @@ const SideBarForm = () => {
   };
 
   const inputOnChange = (name: string, value: string) => {
-    if (value) {
-      setSearchParams((prev) => {
+    setSearchParams((prev) => {
+      if (value) {
         prev.set(name, value);
-        return prev;
-      });
-    } else {
-      setSearchParams((prev) => {
+      } else {
         prev.delete(name);
-        return prev;
-      });
-    }
+      }
+      return prev;
+    });
   };
 
   return (
